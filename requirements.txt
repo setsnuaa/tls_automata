@@ -1,0 +1,9 @@
+pytest==7.2.0
+pytest-cov==4.0.0
+pytest-pylint==0.19.0
+pytest-mypy==0.10.2
+pylstar==0.1.2
+cryptography==38.0.4
+-e git+https://github.com/pictyeye/scapy.git@fddebaa934a941b970f0b2a24c5cf51fc54a8742#egg=scapy
+jinja2==3.1.2
+configparser==5.3.0
