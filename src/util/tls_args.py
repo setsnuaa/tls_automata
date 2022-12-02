@@ -53,6 +53,7 @@ def parse_args(client_inference):
         description="Infer the mealy machine of a TLS Client."
     )
 
+    # dest=参数名称
     parser.add_argument(
         "-T",
         "--trigger-endpoint",
@@ -176,8 +177,10 @@ def parse_args(client_inference):
         "messages", metavar="messages", nargs="*", help="Sequence of messages to send"
     )
 
+    # 解析命令行参数
     args = parser.parse_args()
 
+    # 将解析结果保存到result
     result = argparse.Namespace()
     result.output_dir = args.output_dir
     result.verbose = args.verbose
