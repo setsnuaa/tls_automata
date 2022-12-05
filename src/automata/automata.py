@@ -226,33 +226,33 @@ class Automaton:
 
     # 根据抽象的正确路径找到状态机中的那条正确路径
     # 抽象路径类似TLS成功握手发送的那些消息类型
-    def extract_happy_path(self,path:List[Tuple[str,Set[str]]])->Optional[Path]:
-        automata_path:List[Path]=[]
+    def extract_happy_path(self, path: List[Tuple[str, Set[str]]]) -> Optional[Path]:
+        automata_path: List[Path] = []
         # 从初始状态开始找正确的那条路径
-        state=0
-        for sent_msg,expected_msgs in path:
-            next_state,received_msgs,_=self.follow_transition(state,sent_msg)
-            automata_path.append((state,sent_msg))
+        state = 0
+        for sent_msg, expected_msgs in path:
+            next_state, received_msgs, _ = self.follow_transition(state, sent_msg)
+            automata_path.append((state, sent_msg))
             if expected_msgs:
                 # 如果期望的消息中一条都没有收到
                 if not set(received_msgs).intersection(expected_msgs):
                     return None
-            state=next_state
+            state = next_state
         return automata_path
 
     # 对路径着色
-    def color_path(self,path:Path,color:str):
-        for state,sent_msg in path:
-            _,_,colors=self.follow_transition(state,sent_msg)
+    def color_path(self, path: Path, color: str):
+        for state, sent_msg in path:
+            _, _, colors = self.follow_transition(state, sent_msg)
             colors.add(color)
 
-    def dot(self,dot_policy=None):
-        states=[]
-        transitions=[]
+    def dot(self, dot_policy=None):
+        states = []
+        transitions = []
         # 遍历所有状态
         for state in sorted(self.states):
             states.append(self._dot_state(state))
-            transitions_to_merge:Dict[str,List[str]]={}
+            transitions_to_merge: Dict[str, List[str]] = {}
             starrable_transitions: Set[str] = set()
             # 遍历一个状态对应的所有路径
             for sent_msg in sorted(self.states[state]):
@@ -263,48 +263,47 @@ class Automaton:
                     sent_msg,
                     dot_policy,
                 )
-            transitions.extend(self._commit_transitions(transitions_to_merge,starrable_transitions))
+            transitions.extend(self._commit_transitions(transitions_to_merge, starrable_transitions))
         return "digraph {\n" + "\n".join(states + transitions) + "\n}\n"
 
-    def _dot_state(self,state):
-        if state==0:
-            shape="doubleoctagon"
+    def _dot_state(self, state):
+        if state == 0:
+            shape = "doubleoctagon"
         elif self.is_sink_state(state):
-            shape="rectangle"
+            shape = "rectangle"
         else:
-            shape="ellipse"
+            shape = "ellipse"
         return f'"{state}" [shape={shape}];'
 
     def _register_transition(self,
-                             transitions_to_merge:Dict[str,List[str]],
+                             transitions_to_merge: Dict[str, List[str]],
                              starrable_transitions,
                              state,
                              sent_msg,
                              dot_policy):
-        next_state,recv_msgs,colors=self.states(state,sent_msg)
+        next_state, recv_msgs, colors = self.states(state, sent_msg)
         # output_words之间用"+"连接
-        recv_msgs_str="+".join(recv_msgs)
-        params=f'label="%s / {recv_msgs_str}"'
+        recv_msgs_str = "+".join(recv_msgs)
+        params = f'label="%s / {recv_msgs_str}"'
         if dot_policy:
-            colors,starrable=dot_policy(colors)
+            colors, starrable = dot_policy(colors)
         else:
-            starrable=False
+            starrable = False
 
-        lines_to_fill=[]
+        lines_to_fill = []
         if colors:
             for color in sorted(colors):
                 lines_to_fill.append(
                     f'"{state}" -> "{next_state}" [{params}, color="{color}", fontcolor="{color}"];'
                 )
         else:
-            lines_to_fill=[f'"{state}" -> "{next_state}" [{params}];']
+            lines_to_fill = [f'"{state}" -> "{next_state}" [{params}];']
 
         for line_to_fill in lines_to_fill:
             if starrable:
                 starrable_transitions.add(line_to_fill)
             if line_to_fill not in transitions_to_merge:
-                transitions_to_merge[line_to_fill]=[]
+                transitions_to_merge[line_to_fill] = []
             transitions_to_merge[line_to_fill].append(sent_msg)
 
-    def _commit_transitions(self,transition_to_merge,starrable_transitions):
-
+    def _commit_transitions(self, transition_to_merge, starrable_transitions):
