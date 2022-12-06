@@ -1,4 +1,4 @@
-# 自动机
+# TLS自动机相关操作
 from typing import List, Dict, Tuple, Set, Iterator, Optional
 from itertools import combinations, product
 import hashlib
@@ -246,6 +246,8 @@ class Automaton:
             _, _, colors = self.follow_transition(state, sent_msg)
             colors.add(color)
 
+    # 将状态机格式化输出
+    # ------------------------------------------------------------------
     def dot(self, dot_policy=None):
         states = []
         transitions = []
@@ -290,6 +292,7 @@ class Automaton:
         else:
             starrable = False
 
+        # line_to_fill = "0" -> "1" [label="%s / recv_msgs_str"];
         lines_to_fill = []
         if colors:
             for color in sorted(colors):
@@ -306,4 +309,189 @@ class Automaton:
                 transitions_to_merge[line_to_fill] = []
             transitions_to_merge[line_to_fill].append(sent_msg)
 
-    def _commit_transitions(self, transition_to_merge, starrable_transitions):
+    def _commit_transitions(self, transitions_to_merge, starrable_transitions):
+        star_line = None
+        max_factor = 0
+        for line_to_fill in transitions_to_merge:
+            # sent_msgs的长度
+            factor = len(transitions_to_merge[line_to_fill])
+            if line_to_fill in starrable_transitions and factor > max_factor:
+                max_factor = factor
+                star_line = line_to_fill
+        if max_factor <= 1:
+            star_line = None
+
+        for line_to_fill in transitions_to_merge:
+            if line_to_fill == star_line:
+                continue
+            sent_msgs = transitions_to_merge[line_to_fill]
+            sent_msgs_str = "-".join(sent_msgs)
+            # line_to_fill = "0" -> "1" [label="%s / {recv_msgs_str}"] % sent_msgs_str
+            # line_to_fill = "0" -> "1" [label="sent_msgs_str / recv_msgs_str"]
+            yield line_to_fill % sent_msgs_str
+
+        if star_line:
+            # pylint: disable=consider-using-f-string
+            yield star_line % "*"
+
+    # ----------------------------------------------------------------------
+
+    # 修改输入集，返回一个新的自动机
+    def rename_input_vocabulary(self, mapping: Dict[str, str]):
+        new_vocabulary = set()
+        for word in self.input_vocabulary:
+            if word in mapping:
+                new_vocabulary.add(mapping[word])
+            else:
+                new_vocabulary.add(word)
+        result = Automaton(new_vocabulary)
+
+        for state, transitions in self.states.items():
+            for word in transitions:
+                if word in mapping:
+                    sent_msg = mapping[word]
+                else:
+                    sent_msg = word
+                output = transitions[word]
+                result.add_transition(state, output[0], sent_msg, output[1], output[2])
+        return result
+
+    # 修改输出集
+    def rename_output_vocabulary(self, mapping: Dict[str, str]):
+        result = Automaton(self.input_vocabulary)
+        result.input_vocabulary = self.input_vocabulary
+        for state, transitions in self.states.items():
+            for sent_msg, output in transitions.items():
+                new_recv_msgs = []
+                for word in output[1]:
+                    if word in mapping:
+                        new_recv_msgs.append(mapping[word])
+                    else:
+                        new_recv_msgs.append(word)
+                result.add_transition(state, output[0], sent_msg, new_recv_msgs, output[2])
+        return result
+
+    # 合并状态 -------------------------------------------
+    def minimize(self):
+        states_to_merge = self._find_states_to_merge()
+        # 不断合并
+        while states_to_merge:
+            for state_list in states_to_merge:
+                self._merge_state(state_list)
+            # 合并一轮之后不一定最小，再次查找是否有可以合并的状态
+            # 直到不能合并为止
+            states_to_merge = self._find_states_to_merge()
+        return self
+
+    def _find_states_to_merge(self):
+        # behaviors = [key=状态表，value=可以合并的状态的集合]
+        behaviors: Dict[str, List[int]] = {}
+        for state, transitions in self.states.items():
+            behavior = str(sorted(transitions.items()))
+            # 如果有两个状态，它们的转移表相同，则可以合并
+            if behavior not in behaviors:
+                behaviors[behavior] = []
+            behaviors[behavior].append(state)
+
+        result = []
+        for same_states_list in behaviors.values():
+            if len(same_states_list) > 1:
+                result.append(same_states_list)
+        return result
+
+    def _merge_state(self, state_list):
+        # 将合并状态中的第一个状态作为合并后的状态
+        # 因为会存在下一个状态也出现在合并状态中，所以需要先修改下一个状态
+        # 之后将其他状态从状态表中删除
+        merged_state = state_list.pop(0)
+        for transitions in self.states.values():
+            for sent_msg, output in transitions.items():
+                next_state, recv_msgs, colors = output
+                if next_state in state_list:
+                    transitions[sent_msg] = merged_state, recv_msgs, colors
+        for state in state_list:
+            self.states.pop(state)
+
+    # ----------------------------------------------------
+
+    def compute_bdist(self):
+        """
+        Return b_dist (int), the distinguishing bound for the state machine,
+        and a dictionary of state pairs/sequences leading to the bound.
+        """
+        nb_states = len(self.states)
+
+        b_dist = 0
+        b_pairs: Dict[str, List[str]] = {}
+
+        for pair in combinations(range(nb_states), 2):
+            break_var = False
+            for loop_index in range(1, nb_states):
+                if break_var:
+                    break
+                for word in product(sorted(self.input_vocabulary), repeat=loop_index):
+                    output_words1 = self.run(list(word), initial_state=pair[0])[1]
+                    output_words2 = self.run(list(word), initial_state=pair[1])[1]
+                    if output_words1 != output_words2:
+                        if b_dist <= loop_index:
+                            b_dist = loop_index
+                            b_pairs[f"({pair[0]}, {pair[1]})"] = list(word)
+                        break_var = True
+                        break
+
+            if break_var:
+                continue
+
+        b_pairs = {k: v for (k, v) in b_pairs.items() if len(v) == b_dist}
+        return b_dist, b_pairs
+
+
+# 从L*算法的状态机转换成TLS状态机
+def convert_from_pylstar(
+        input_vocabulary: List[str], pylstar_automaton: pylstar.automata.Automata.Automata
+) -> Automaton:
+    automaton = Automaton(set(input_vocabulary))
+
+    for input_state in pylstar_automaton.get_states():
+        for transition in input_state.transitions:
+            input_word, output_words = transition.label.split("/")
+            input_word = input_word.strip()
+            # "+"分隔，并且清除
+            output_words = [m.strip() for m in output_words.split("+") if m.strip()]
+            automaton.add_transition(
+                int(input_state.name),
+                int(transition.output_state.name),
+                input_word,
+                output_words,
+            )
+
+    return automaton.reorder_states()
+
+
+# 加载TLS自动机-------------------------------------------------
+def load_automaton(content: str) -> Automaton:
+    lines = content.split("\n")
+    input_vocabulary = [word.strip() for word in lines[0].split(" ")]
+    automaton = Automaton(set(input_vocabulary))
+    for line in lines[1:]:
+        if not line.strip():
+            continue
+        input_state_s, output_state_s, input_word, output_words_s = line.split(",")
+        input_state = int(input_state_s)
+        output_state = int(output_state_s)
+        input_word = input_word.strip()
+        output_words = [m.strip() for m in output_words_s.split("+") if m.strip()]
+        automaton.add_transition(input_state, output_state, input_word, output_words)
+    return automaton
+
+
+def load_automaton_from_file(filename: str) -> Automaton:
+    with open(filename, encoding="utf-8") as automaton_file:
+        content = automaton_file.read()
+    return load_automaton(content)
+# --------------------------------------------------------------
+
+
+def extract_distinguishers(
+
+)
