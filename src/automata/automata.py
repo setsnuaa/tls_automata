@@ -275,7 +275,7 @@ class Automaton:
             shape = "rectangle"
         else:
             shape = "ellipse"
-        return f'"{state}" [shape={shape}];'
+        return f'"{state}" [shape={shape} label={state}];'
 
     def _register_transition(self,
                              transitions_to_merge: Dict[str, List[str]],
@@ -489,6 +489,8 @@ def load_automaton_from_file(filename: str) -> Automaton:
     with open(filename, encoding="utf-8") as automaton_file:
         content = automaton_file.read()
     return load_automaton(content)
+
+
 # --------------------------------------------------------------
 
 
