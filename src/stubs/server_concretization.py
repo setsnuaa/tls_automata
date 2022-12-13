@@ -6,7 +6,9 @@ from server import TLSServer
 
 class InfererTools:
     def __init__(self, local_endpoint, crypto_material, timeout, accept_timeout):
+        # ip, port
         self.local_endpoint = local_endpoint
+        # 加密套件
         self.crypto_material = crypto_material
         self.timeout = timeout
         self.accept_timeout = accept_timeout

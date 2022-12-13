@@ -19,6 +19,16 @@ from automata.automata import convert_from_pylstar
 from StoreHypotheses import StoreHypotheses
 from stubs.server_concretization import InfererTools
 
+"""
+服务端与客户端交互过程：
+1.客户端的容器里面会运行一个脚本，它用ncat命令监听4444端口
+2.服务端连接上这个端口，并且监听4433端口
+3.服务端发送信息"127.0.0.1 4433"给脚本
+4.脚本收到信息后启动客户端，连接服务端（"127.0.0.1 4433"）
+由于在推理过程中客户端收到错误消息会断开连接，我们需要不断重启客户端，
+所以步骤3和步骤4会在推理过程中反复执行。
+"""
+
 
 class TLSClientKnowledgeBase(ActiveKnowledgeBase):
     def __init__(self, tls_version, options):
@@ -45,6 +55,7 @@ class TLSClientKnowledgeBase(ActiveKnowledgeBase):
         self.options = options
 
     def start(self):
+        # 连接客户端容器中的脚本
         if self.options.trigger_endpoint:
             endpoint_tuple = self.options.trigger_endpoint.as_tuple()
             self.client_trigger = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -53,20 +64,24 @@ class TLSClientKnowledgeBase(ActiveKnowledgeBase):
         # 启动TLS服务端
         self.tls_session = self.tools.initTLS13Connexion()
 
-    # 关闭客户端
+    # 关闭和脚本的连接
     def stop(self):
         if self.client_trigger:
             self.client_trigger.close()
 
+    # 脚本自动启动客户端，不需要服务端去启动
     def start_target(self):
         pass
 
-    # 关闭服务端
+    # 关闭和客户端的连接
     def stop_target(self):
         if self.tls_session.socket:
             self.tls_session.socket.close()
 
     # 通过运行在客户端的脚本来启动客户端
+    # 客户端那边的容器里运行ncat命令，它作为服务端端，TLS服务端向它发送消息"127.0.0.1 4433"
+    # 然后ncat将信息转发给shell命令，shell命令读取ip和port之后运行TLS客户端来连接TLS服务端
+    # 每执行一次该函数就会启动一次TLS客户端
     def trigger_client(self):
         host, port = self.options.local_endpoint.as_tuple()
         trigger_string = f"{host} {port}\n".encode("utf8")
