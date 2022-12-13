@@ -147,6 +147,7 @@ def get_expected_output(input_word: Word, knowledge_tree: KnowledgeTree) -> List
 def read_next_msg(tls_session, timeout=None):
     try:
         if timeout:
+            # 调用这个函数后客户端发送的消息存到服务端的缓存里面了
             tls_session.get_next_msg(socket_timeout=timeout)
         else:
             tls_session.get_next_msg()
