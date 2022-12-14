@@ -13,6 +13,7 @@ from pylstar.Word import Word
 
 import config.scenarios
 import util.tls_args
+from src.util import tls_args
 from util.utils import fill_answer_with, get_expected_output, read_next_msg
 from HappyPathFirst import HappyPathFirst
 from automata.automata import convert_from_pylstar
@@ -183,3 +184,129 @@ class TLSClientKnowledgeBase(ActiveKnowledgeBase):
         # pylint: disable=broad-except
         except Exception:
             return "INTERNAL ERROR DURING RECEPTION"
+
+
+def log_fn(log_file, s):
+    print(s, end="")
+    sys.stdout.flush()
+    log_file.write(s)
+
+
+def main():
+    # 解析命令行参数
+    args = tls_args.parse_args(client_inference=True)
+
+    try:
+        os.mkdir(args.output_dir)
+    except FileExistsError:
+        pass
+    log_filename = f"{args.output_dir}/infer_client.log"
+    log_file = open(log_filename, "w", encoding="utf-8")
+    log = lambda s: log_fn(log_file, s)
+    args.log = log
+
+    dirname = os.path.dirname(sys.argv[0])
+    with open(
+            f"{dirname}/../scenarios/{args.vocabulary}-server.scenario",
+            "r",
+            encoding="utf-8",
+    ) as scenario_file:
+        # 以命令行参数的形式传入加密套件
+        crypto_material_names = [name for name in args.crypto_material.iter_names()]
+        # 加载实验场景
+        scenario = config.scenarios.load_scenario(scenario_file, crypto_material_names)
+    if scenario.role != "server":
+        raise Exception("Invalid scenario (expecting a client role)")
+
+    TLSBase = TLSClientKnowledgeBase(scenario.tls_version, options=args)
+
+    logging.getLogger("WpMethodEQ").setLevel(logging.DEBUG)
+    logging.getLogger("RandomWalkMethod").setLevel(logging.DEBUG)
+    logging.getLogger("BDistMethod").setLevel(logging.DEBUG)
+    logging.getLogger("HappyPathFirst").setLevel(logging.DEBUG)
+    logging.getLogger("StoreHypotheses").setLevel(logging.DEBUG)
+
+    try:
+        TLSBase.start()
+
+        if args.messages:
+            input_sequence = Word(letters=[Letter(m) for m in args.messages])
+            output_sequence = TLSBase._resolve_word(input_sequence)
+            output = [list(l.symbols)[0] for l in output_sequence.letters]
+            last_output = output
+            repetitions = 1
+
+            for sent, received in zip(args.messages, output):
+                print(f"{sent} => {received}")
+            sys.stdout.flush()
+
+            for _i in range(1, args.loops):
+                output_sequence = TLSBase._execute_word(input_sequence)
+                output = [list(l.symbols)[0] for l in output_sequence.letters]
+
+                if output == last_output:
+                    repetitions += 1
+                    continue
+
+                print(f"    sequence observed {repetitions} times\n")
+                repetitions = 1
+                last_output = output
+
+                for sent, received in zip(args.messages, output):
+                    print(f"{sent} => {received}")
+                sys.stdout.flush()
+
+            if args.loops > 1:
+                print(f"    sequence observed {repetitions} times\n")
+
+            return
+
+        # 将输入集转换为Letter类，一个str对应一个Letter，比如ServerHello对应一个Letter
+        input_letters = [Letter(s) for s in scenario.input_vocabulary]
+        log(f"input_letters {scenario.input_vocabulary}\n")
+        log(f"eqtests: {args.eq_method_str}\n")
+        log(f"timeout: {args.timeout}\n")
+
+        # 等价查询
+        eqtests = args.eq_method((TLSBase, input_letters))
+        if not args.disable_happy_path_first and scenario.interesting_paths:
+            interesting_paths_with_letters = [
+                [Letter(s) for s in path] for path in scenario.interesting_paths
+            ]
+            eqtests = HappyPathFirst(TLSBase, interesting_paths_with_letters, eqtests)
+        eqtests = StoreHypotheses(
+            TLSBase,
+            scenario.input_vocabulary,
+            args.output_dir,
+            eqtests,
+        )
+
+        # 学习过程----------------------------------
+        lstar = LSTAR(
+            scenario.input_vocabulary, TLSBase, max_states=15, eqtests=eqtests
+        )
+        start = time.time()
+        state_machine = lstar.learn()
+        end = time.time()
+
+        duration = end - start
+        log(f"\ntime spent in lstar.learn(): {duration}\n")
+        log(f"n_states: {len(state_machine.get_states())}\n")
+        # -----------------------------------------
+    finally:
+        TLSBase.stop()
+
+    automaton = convert_from_pylstar(scenario.input_vocabulary, state_machine)
+    with open(f"{args.output_dir}/final.automaton", "w", encoding="utf-8") as fd:
+        fd.write(f"{automaton}\n")
+    with open(f"{args.output_dir}/automaton.dot", "w", encoding="utf-8") as fd:
+        fd.write(automaton.dot())
+
+    log(f"n_queries={TLSBase.stats.nb_query}\n")
+    log(f"n_submitted_queries={TLSBase.stats.nb_submited_query}\n")
+    log(f"n_letters={TLSBase.stats.nb_letter}\n")
+    log(f"n_submitted_letters={TLSBase.stats.nb_submited_letter}\n")
+
+
+if __name__ == "__main__":
+    main()
