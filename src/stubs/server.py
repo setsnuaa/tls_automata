@@ -74,6 +74,7 @@ from scapy.all import load_layer
 
 load_layer("tls")
 
+
 class TLSServer(_TLSAutomaton):
     """
     A simple TLS test server automaton. Try to overload some states or
@@ -98,19 +99,19 @@ class TLSServer(_TLSAutomaton):
     """
 
     def parse_args(
-        self,
-        server="127.0.0.1",
-        sport=4433,
-        mycert=None,
-        mykey=None,
-        preferred_ciphersuite=None,
-        is_echo_server=True,
-        max_client_idle_time=60,
-        curve=None,
-        cookie=False,
-        timeout=None,
-        accept_timeout=None,
-        **kargs
+            self,
+            server="127.0.0.1",
+            sport=4433,
+            mycert=None,
+            mykey=None,
+            preferred_ciphersuite=None,
+            is_echo_server=True,
+            max_client_idle_time=60,
+            curve=None,
+            cookie=False,
+            timeout=None,
+            accept_timeout=None,
+            **kargs
     ):
 
         super().parse_args(mycert=mycert, mykey=mykey, **kargs)
@@ -151,7 +152,7 @@ class TLSServer(_TLSAutomaton):
             self.threadid = threading.currentThread().ident
 
             # Update default parameters
-            a = args + self.init_args[len(args) :]
+            a = args + self.init_args[len(args):]
             k = self.init_kargs.copy()
             k.update(kargs)
             self.parse_args(*a, **k)
@@ -247,8 +248,8 @@ class TLSServer(_TLSAutomaton):
 
         try:
             if byte0 == 0x17 and (
-                self.cur_session.advertised_tls_version >= 0x0304
-                or self.cur_session.tls_version >= 0x0304
+                    self.cur_session.advertised_tls_version >= 0x0304
+                    or self.cur_session.tls_version >= 0x0304
             ):
                 p = TLS13(self.remain_in, tls_session=self.cur_session)
                 self.remain_in = b""
@@ -260,8 +261,8 @@ class TLSServer(_TLSAutomaton):
                 if isinstance(p, SSLv2) and not p.msg:
                     p.msg = Raw("")
                 if (
-                    self.cur_session.tls_version is None
-                    or self.cur_session.tls_version < 0x0304
+                        self.cur_session.tls_version is None
+                        or self.cur_session.tls_version < 0x0304
                 ):
                     self.buffer_in += p.msg
                 else:
@@ -286,8 +287,8 @@ class TLSServer(_TLSAutomaton):
             elif isinstance(p.payload, TLS):
                 p = p.payload
                 if (
-                    self.cur_session.tls_version is None
-                    or self.cur_session.tls_version < 0x0304
+                        self.cur_session.tls_version is None
+                        or self.cur_session.tls_version < 0x0304
                 ):
                     self.buffer_in += p.msg
                 else:
@@ -307,11 +308,11 @@ class TLSServer(_TLSAutomaton):
             self.get_next_msg()
 
         if not self.buffer_in or (
-            not isinstance(self.buffer_in[0], pkt_cls)
-            and not (
+                not isinstance(self.buffer_in[0], pkt_cls)
+                and not (
                 isinstance(self.buffer_in[0], TLSClientHello)
                 and self.cur_session.advertised_tls_version == 0x0304
-            )
+        )
         ):
             return
         self.cur_pkt = self.buffer_in[0]
@@ -329,7 +330,7 @@ class TLSServer(_TLSAutomaton):
             packet_constructed = p.raw_stateful()
             if "TLS13ServerHello" in symbols:
                 packet_constructed = (
-                    packet_constructed[0:1] + b"\x03\x03" + packet_constructed[3:]
+                        packet_constructed[0:1] + b"\x03\x03" + packet_constructed[3:]
                 )
             msg.append(packet_constructed)
         self.msg_to_send = b"".join(msg)
