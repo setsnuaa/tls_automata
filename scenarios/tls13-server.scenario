@@ -1,0 +1,29 @@
+[general]
+name=tls13
+tls_version=tls13
+role=server
+
+input_vocabulary = TLS13ServerHello, TLS13SH_WITH_00_RandBytes, TLSChangeCipherSpec, TLS13EncryptedExtensions, TLS13CertificateRequest, TLS13Certificate_{crypto_material_name}, TLS13EmptyCertificate, TLS13CertificateVerify, TLS13InvalidCertificateVerify, TLSFinished, TLSApplicationData, TLSApplicationDataEmpty, TLSCloseNotify, NoRenegotiation
+
+
+interesting_paths = standard_path, standard_path_with_cert_request, standard_path_with_ccs,standard_path_with_ccs_and_cert_request,strange_path1
+
+
+[standard_path]
+parameter = crypto_material_name
+path = TLS13ServerHello, TLS13EncryptedExtensions, TLS13Certificate_{crypto_material_name}, TLS13CertificateVerify, TLSFinished, TLSApplicationData
+
+[standard_path_with_cert_request]
+parameter = crypto_material_name
+path = TLS13ServerHello, TLS13EncryptedExtensions, TLS13CertificateRequest, TLS13Certificate_{crypto_material_name}, TLS13CertificateVerify, TLSFinished, TLSApplicationData
+
+[standard_path_with_ccs]
+parameter = crypto_material_name
+path = TLS13ServerHello, TLSChangeCipherSpec, TLS13EncryptedExtensions, TLS13Certificate_{crypto_material_name}, TLS13CertificateVerify, TLSFinished, TLSApplicationData
+
+[standard_path_with_ccs_and_cert_request]
+parameter = crypto_material_name
+path = TLS13ServerHello, TLSChangeCipherSpec, TLS13EncryptedExtensions, TLS13CertificateRequest, TLS13Certificate_{crypto_material_name}, TLS13CertificateVerify, TLSFinished, TLSApplicationData
+
+[strange_path1]
+path = TLS13ServerHello, TLS13EncryptedExtensions, TLS13CertificateRequest, TLS13EmptyCertificate, TLS13InvalidCertificateVerify, TLSFinished

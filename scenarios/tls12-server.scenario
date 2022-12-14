@@ -1,0 +1,25 @@
+[general]
+name=tls12
+tls_version=tls12
+role=server
+
+input_vocabulary = TLS12ServerHello, TLS12CertificateRequest, TLS12Certificate_{crypto_material_name}, TLS12EmptyCertificate, TLS12ServerKeyExchange, TLS12ServerHelloDone, TLSChangeCipherSpec, TLSFinished, TLSApplicationData, TLSCloseNotify
+
+interesting_paths = rsa_path, dh_path, rsa_path_with_cert_request, dh_path_with_cert_request
+
+
+[rsa_path]
+parameter = crypto_material_name
+path = TLS12ServerHello, TLS12Certificate_{crypto_material_name}, TLS12ServerHelloDone, TLSChangeCipherSpec, TLSFinished, TLSApplicationData
+
+[dh_path]
+parameter = crypto_material_name
+path = TLS12ServerHello, TLS12Certificate_{crypto_material_name}, TLS12ServerKeyExchange, TLS12ServerHelloDone, TLSChangeCipherSpec, TLSFinished, TLSApplicationData
+
+[rsa_path_with_cert_request]
+parameter = crypto_material_name
+path = TLS12ServerHello, TLS12Certificate_{crypto_material_name}, TLS12CertificateRequest, TLS12ServerHelloDone, TLSChangeCipherSpec, TLSFinished, TLSApplicationData
+
+[dh_path_with_cert_request]
+parameter = crypto_material_name
+path = TLS12ServerHello, TLS12Certificate_{crypto_material_name}, TLS12ServerKeyExchange, TLS12CertificateRequest, TLS12ServerHelloDone, TLSChangeCipherSpec, TLSFinished, TLSApplicationData
