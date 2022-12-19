@@ -5,7 +5,7 @@ import argparse
 from pylstar.eqtests.RandomWalkMethod import RandomWalkMethod
 from pylstar.eqtests.WpMethodEQ import WpMethodEQ
 
-from utils import Endpoint, CryptoMaterial, InvalidCryptoMaterialLine
+from src.util.utils import Endpoint, CryptoMaterial, InvalidCryptoMaterialLine
 
 
 def handle_endpoint(parser, endpoint_str) -> Endpoint:

@@ -1,24 +1,23 @@
 # 推断TLS客户端状态机
+import logging
 import os
 import os.path
+import socket
 import sys
 import time
-import socket
-import logging
 
-from pylstar.LSTAR import LSTAR
 from pylstar.ActiveKnowledgeBase import ActiveKnowledgeBase
+from pylstar.LSTAR import LSTAR
 from pylstar.Letter import Letter
 from pylstar.Word import Word
 
 import config.scenarios
-import util.tls_args
-from src.util import tls_args
-from util.utils import fill_answer_with, get_expected_output, read_next_msg
 from HappyPathFirst import HappyPathFirst
-from automata.automata import convert_from_pylstar
 from StoreHypotheses import StoreHypotheses
+from automata.automata import convert_from_pylstar
+from src.util import tls_args
 from stubs.server_concretization import InfererTools
+from util.utils import fill_answer_with, get_expected_output, read_next_msg
 
 """
 服务端与客户端交互过程：
@@ -299,8 +298,8 @@ def main():
     automaton = convert_from_pylstar(scenario.input_vocabulary, state_machine)
     with open(f"{args.output_dir}/final.automaton", "w", encoding="utf-8") as fd:
         fd.write(f"{automaton}\n")
-    with open(f"{args.output_dir}/automaton.dot", "w", encoding="utf-8") as fd:
-        fd.write(automaton.dot())
+    # with open(f"{args.output_dir}/automaton.dot", "w", encoding="utf-8") as fd:
+    #     fd.write(automaton.dot())
 
     log(f"n_queries={TLSBase.stats.nb_query}\n")
     log(f"n_submitted_queries={TLSBase.stats.nb_submited_query}\n")
