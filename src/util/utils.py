@@ -10,7 +10,7 @@ from scapy.layers.tls.record import TLSAlert, _tls_alert_description
 
 
 class Endpoint:
-    def __int__(self, endpoint_str: str):
+    def __init__(self, endpoint_str: str):
         self._host, port_str = endpoint_str.split(":")
         self._port = int(port_str)
 

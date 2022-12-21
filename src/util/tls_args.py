@@ -1,3 +1,4 @@
+# -*- coding：utf-8 -*-
 # 命令行参数处理
 import sys
 import argparse
@@ -5,7 +6,7 @@ import argparse
 from pylstar.eqtests.RandomWalkMethod import RandomWalkMethod
 from pylstar.eqtests.WpMethodEQ import WpMethodEQ
 
-from src.util.utils import Endpoint, CryptoMaterial, InvalidCryptoMaterialLine
+from util.utils import Endpoint, CryptoMaterial, InvalidCryptoMaterialLine
 
 
 def handle_endpoint(parser, endpoint_str) -> Endpoint:
@@ -115,7 +116,7 @@ def parse_args(client_inference):
     )
 
     # 默认等价查询方法
-    default_eq_test = "BDist:3"
+    default_eq_test = "WP:15"
     parser.add_argument(
         "-E",
         "--eq-method",

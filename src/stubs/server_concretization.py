@@ -1,7 +1,7 @@
 # 抽象消息转换TLS消息
 from scapy.layers.tls.cert import Cert, PrivKey, PrivKeyRSA
 
-from src.stubs.server import TLSServer
+from stubs.server import TLSServer
 
 
 class InfererTools:
