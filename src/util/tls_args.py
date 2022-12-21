@@ -5,6 +5,7 @@ import argparse
 
 from pylstar.eqtests.RandomWalkMethod import RandomWalkMethod
 from pylstar.eqtests.WpMethodEQ import WpMethodEQ
+from util.BDistMethod import BDistMethod
 
 from util.utils import Endpoint, CryptoMaterial, InvalidCryptoMaterialLine
 
@@ -43,6 +44,9 @@ def handle_eq_method(parser, eq_method_str):
         max_steps, restart_probability = int(msg[1]), float(msg[2])
         return lambda x: RandomWalkMethod(x[0], x[1], max_steps,
                                           restart_probability), f"RandomWalkMethod({max_steps, restart_probability})"
+    if len(msg) == 2 and msg[0] == "BDist":
+        distinguishing_bound = int(msg[1])
+        return lambda x: BDistMethod(x[0], x[1], distinguishing_bound), f"BDist({distinguishing_bound})"
     print(f"非法等价查询方法 ({eq_method_str})", file=sys.stderr)
     parser.print_usage(file=sys.stderr)
     sys.exit(1)
@@ -116,7 +120,7 @@ def parse_args(client_inference):
     )
 
     # 默认等价查询方法
-    default_eq_test = "WP:15"
+    default_eq_test = "BDist:3"
     parser.add_argument(
         "-E",
         "--eq-method",
