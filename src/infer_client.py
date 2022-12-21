@@ -1,3 +1,4 @@
+# -*- coding：utf-8 -*-
 # 推断TLS客户端状态机
 import logging
 import os
@@ -15,7 +16,7 @@ import config.scenarios
 from HappyPathFirst import HappyPathFirst
 from StoreHypotheses import StoreHypotheses
 from automata.automata import convert_from_pylstar
-from src.util import tls_args
+from util import tls_args
 from stubs.server_concretization import InfererTools
 from util.utils import fill_answer_with, get_expected_output, read_next_msg
 
@@ -107,7 +108,7 @@ class TLSClientKnowledgeBase(ActiveKnowledgeBase):
 
         return True
 
-    #
+    # L*算法调用这个函数来根据输入获得输出
     def submit_word(self, word):
         n = len(word.letters)
 
