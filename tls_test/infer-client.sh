@@ -32,7 +32,7 @@ docker run -d --rm \
                            -A /tmp/ca.pem
 
 # 结果保存在这个路径
-RESULTS_DIR="$PWD"/result/"${CLIENT_IMAGE#*:}"
+RESULTS_DIR="$PWD"/results/"${CLIENT_IMAGE#*:}"
 mkdir -p "$RESULTS_DIR"
 
 # 生成服务端证书
