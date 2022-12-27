@@ -14,15 +14,13 @@
            containers/tools/%.docker
 
 
-#########
-# TOOLS #
-#########
+########
+# TOOL #
+########
 
-containers/tools/pylstar-tls.docker: tools/pylstar-tls/Dockerfile \
-		tools/pylstar-tls/probe_server.sh \
-		tools/pylstar-tls/probe_client.sh
-	docker build -t tls-test/tls-inferer .
-	mkdir -p containers/tools
+containers/tool/tls-inferer.docker: tool/Dockerfile tool/probe_client.sh
+	docker build -t tls-test/tls-inferer tool
+	mkdir -p containers/tool
 	docker image ls -q tls-test/tls-inferer > $@
 
 
