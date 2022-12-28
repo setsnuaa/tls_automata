@@ -283,7 +283,7 @@ class Automaton:
                              state,
                              sent_msg,
                              dot_policy):
-        next_state, recv_msgs, colors = self.states(state, sent_msg)
+        next_state, recv_msgs, colors = self.states[state][sent_msg]
         # output_words之间用"+"连接
         recv_msgs_str = "+".join(recv_msgs)
         params = f'label="%s / {recv_msgs_str}"'
