@@ -1,0 +1,161 @@
+NoRenegotiation TLS13CertificateRequest TLS13CertificateVerify TLS13Certificate_invalid TLS13Certificate_untrusted TLS13Certificate_valid TLS13EmptyCertificate TLS13EncryptedExtensions TLS13InvalidCertificateVerify TLS13SH_WITH_00_RandBytes TLS13ServerHello TLSApplicationData TLSApplicationDataEmpty TLSChangeCipherSpec TLSCloseNotify TLSFinished
+0, 1, NoRenegotiation, FatalAlert(unexpected_message)
+0, 1, TLS13CertificateRequest, FatalAlert(unexpected_message)
+0, 1, TLS13CertificateVerify, FatalAlert(unexpected_message)
+0, 1, TLS13Certificate_invalid, FatalAlert(unexpected_message)
+0, 0, TLS13Certificate_untrusted, INTERNAL ERROR DURING EMISSION
+0, 1, TLS13Certificate_valid, FatalAlert(unexpected_message)
+0, 1, TLS13EmptyCertificate, FatalAlert(unexpected_message)
+0, 1, TLS13EncryptedExtensions, FatalAlert(unexpected_message)
+0, 1, TLS13InvalidCertificateVerify, FatalAlert(unexpected_message)
+0, 2, TLS13SH_WITH_00_RandBytes, No RSP
+0, 2, TLS13ServerHello, No RSP
+0, 1, TLSApplicationData, FatalAlert(unexpected_message)
+0, 1, TLSApplicationDataEmpty, FatalAlert(unexpected_message)
+0, 1, TLSChangeCipherSpec, FatalAlert(unexpected_message)
+0, 1, TLSCloseNotify, FatalAlert(unexpected_message)
+0, 1, TLSFinished, FatalAlert(unexpected_message)
+1, 9, NoRenegotiation, EOF
+1, 9, TLS13CertificateRequest, EOF
+1, 9, TLS13CertificateVerify, EOF
+1, 9, TLS13Certificate_invalid, EOF
+1, 1, TLS13Certificate_untrusted, INTERNAL ERROR DURING EMISSION
+1, 9, TLS13Certificate_valid, EOF
+1, 9, TLS13EmptyCertificate, EOF
+1, 9, TLS13EncryptedExtensions, EOF
+1, 9, TLS13InvalidCertificateVerify, EOF
+1, 9, TLS13SH_WITH_00_RandBytes, EOF
+1, 9, TLS13ServerHello, EOF
+1, 9, TLSApplicationData, EOF
+1, 9, TLSApplicationDataEmpty, EOF
+1, 9, TLSChangeCipherSpec, EOF
+1, 9, TLSCloseNotify, EOF
+1, 9, TLSFinished, EOF
+2, 9, NoRenegotiation, EOF
+2, 1, TLS13CertificateRequest, FatalAlert(unexpected_message)
+2, 1, TLS13CertificateVerify, FatalAlert(unexpected_message)
+2, 1, TLS13Certificate_invalid, FatalAlert(unexpected_message)
+2, 2, TLS13Certificate_untrusted, INTERNAL ERROR DURING EMISSION
+2, 1, TLS13Certificate_valid, FatalAlert(unexpected_message)
+2, 1, TLS13EmptyCertificate, FatalAlert(unexpected_message)
+2, 3, TLS13EncryptedExtensions, No RSP
+2, 1, TLS13InvalidCertificateVerify, FatalAlert(unexpected_message)
+2, 1, TLS13SH_WITH_00_RandBytes, FatalAlert(unexpected_message)
+2, 1, TLS13ServerHello, FatalAlert(unexpected_message)
+2, 1, TLSApplicationData, FatalAlert(unexpected_message)
+2, 1, TLSApplicationDataEmpty, FatalAlert(unexpected_message)
+2, 1, TLSChangeCipherSpec, FatalAlert(illegal_parameter)
+2, 1, TLSCloseNotify, No RSP
+2, 1, TLSFinished, FatalAlert(unexpected_message)
+3, 9, NoRenegotiation, EOF
+3, 4, TLS13CertificateRequest, No RSP
+3, 1, TLS13CertificateVerify, UnknownPacket
+3, 5, TLS13Certificate_invalid, No RSP
+3, 3, TLS13Certificate_untrusted, INTERNAL ERROR DURING EMISSION
+3, 5, TLS13Certificate_valid, No RSP
+3, 1, TLS13EmptyCertificate, UnknownPacket
+3, 1, TLS13EncryptedExtensions, UnknownPacket
+3, 1, TLS13InvalidCertificateVerify, UnknownPacket
+3, 1, TLS13SH_WITH_00_RandBytes, UnknownPacket
+3, 1, TLS13ServerHello, UnknownPacket
+3, 1, TLSApplicationData, UnknownPacket
+3, 1, TLSApplicationDataEmpty, UnknownPacket
+3, 1, TLSChangeCipherSpec, UnknownPacket
+3, 1, TLSCloseNotify, No RSP
+3, 1, TLSFinished, UnknownPacket
+4, 9, NoRenegotiation, EOF
+4, 1, TLS13CertificateRequest, UnknownPacket
+4, 1, TLS13CertificateVerify, UnknownPacket
+4, 6, TLS13Certificate_invalid, No RSP
+4, 4, TLS13Certificate_untrusted, INTERNAL ERROR DURING EMISSION
+4, 6, TLS13Certificate_valid, No RSP
+4, 1, TLS13EmptyCertificate, UnknownPacket
+4, 1, TLS13EncryptedExtensions, UnknownPacket
+4, 1, TLS13InvalidCertificateVerify, UnknownPacket
+4, 1, TLS13SH_WITH_00_RandBytes, UnknownPacket
+4, 1, TLS13ServerHello, UnknownPacket
+4, 1, TLSApplicationData, UnknownPacket
+4, 1, TLSApplicationDataEmpty, UnknownPacket
+4, 1, TLSChangeCipherSpec, UnknownPacket
+4, 1, TLSCloseNotify, No RSP
+4, 1, TLSFinished, UnknownPacket
+5, 9, NoRenegotiation, EOF
+5, 1, TLS13CertificateRequest, UnknownPacket
+5, 7, TLS13CertificateVerify, No RSP
+5, 1, TLS13Certificate_invalid, UnknownPacket
+5, 5, TLS13Certificate_untrusted, INTERNAL ERROR DURING EMISSION
+5, 1, TLS13Certificate_valid, UnknownPacket
+5, 1, TLS13EmptyCertificate, UnknownPacket
+5, 1, TLS13EncryptedExtensions, UnknownPacket
+5, 1, TLS13InvalidCertificateVerify, UnknownPacket
+5, 1, TLS13SH_WITH_00_RandBytes, UnknownPacket
+5, 1, TLS13ServerHello, UnknownPacket
+5, 1, TLSApplicationData, UnknownPacket
+5, 1, TLSApplicationDataEmpty, UnknownPacket
+5, 1, TLSChangeCipherSpec, UnknownPacket
+5, 1, TLSCloseNotify, No RSP
+5, 1, TLSFinished, UnknownPacket
+6, 9, NoRenegotiation, EOF
+6, 1, TLS13CertificateRequest, UnknownPacket
+6, 8, TLS13CertificateVerify, No RSP
+6, 1, TLS13Certificate_invalid, UnknownPacket
+6, 6, TLS13Certificate_untrusted, INTERNAL ERROR DURING EMISSION
+6, 1, TLS13Certificate_valid, UnknownPacket
+6, 1, TLS13EmptyCertificate, UnknownPacket
+6, 1, TLS13EncryptedExtensions, UnknownPacket
+6, 1, TLS13InvalidCertificateVerify, UnknownPacket
+6, 1, TLS13SH_WITH_00_RandBytes, UnknownPacket
+6, 1, TLS13ServerHello, UnknownPacket
+6, 1, TLSApplicationData, UnknownPacket
+6, 1, TLSApplicationDataEmpty, UnknownPacket
+6, 1, TLSChangeCipherSpec, UnknownPacket
+6, 1, TLSCloseNotify, No RSP
+6, 1, TLSFinished, UnknownPacket
+7, 9, NoRenegotiation, EOF
+7, 1, TLS13CertificateRequest, UnknownPacket
+7, 1, TLS13CertificateVerify, UnknownPacket
+7, 1, TLS13Certificate_invalid, UnknownPacket
+7, 7, TLS13Certificate_untrusted, INTERNAL ERROR DURING EMISSION
+7, 1, TLS13Certificate_valid, UnknownPacket
+7, 1, TLS13EmptyCertificate, UnknownPacket
+7, 1, TLS13EncryptedExtensions, UnknownPacket
+7, 1, TLS13InvalidCertificateVerify, UnknownPacket
+7, 1, TLS13SH_WITH_00_RandBytes, UnknownPacket
+7, 1, TLS13ServerHello, UnknownPacket
+7, 1, TLSApplicationData, UnknownPacket
+7, 1, TLSApplicationDataEmpty, UnknownPacket
+7, 1, TLSChangeCipherSpec, UnknownPacket
+7, 1, TLSCloseNotify, No RSP
+7, 1, TLSFinished, TLSFinished+Warning(close_notify)
+8, 9, NoRenegotiation, EOF
+8, 1, TLS13CertificateRequest, UnknownPacket
+8, 1, TLS13CertificateVerify, UnknownPacket
+8, 1, TLS13Certificate_invalid, UnknownPacket
+8, 8, TLS13Certificate_untrusted, INTERNAL ERROR DURING EMISSION
+8, 1, TLS13Certificate_valid, UnknownPacket
+8, 1, TLS13EmptyCertificate, UnknownPacket
+8, 1, TLS13EncryptedExtensions, UnknownPacket
+8, 1, TLS13InvalidCertificateVerify, UnknownPacket
+8, 1, TLS13SH_WITH_00_RandBytes, UnknownPacket
+8, 1, TLS13ServerHello, UnknownPacket
+8, 1, TLSApplicationData, UnknownPacket
+8, 1, TLSApplicationDataEmpty, UnknownPacket
+8, 1, TLSChangeCipherSpec, UnknownPacket
+8, 1, TLSCloseNotify, No RSP
+8, 1, TLSFinished, TLS13Certificate+TLSFinished+Warning(close_notify)
+9, 9, NoRenegotiation, EOF
+9, 9, TLS13CertificateRequest, EOF
+9, 9, TLS13CertificateVerify, EOF
+9, 9, TLS13Certificate_invalid, EOF
+9, 9, TLS13Certificate_untrusted, EOF
+9, 9, TLS13Certificate_valid, EOF
+9, 9, TLS13EmptyCertificate, EOF
+9, 9, TLS13EncryptedExtensions, EOF
+9, 9, TLS13InvalidCertificateVerify, EOF
+9, 9, TLS13SH_WITH_00_RandBytes, EOF
+9, 9, TLS13ServerHello, EOF
+9, 9, TLSApplicationData, EOF
+9, 9, TLSApplicationDataEmpty, EOF
+9, 9, TLSChangeCipherSpec, EOF
+9, 9, TLSCloseNotify, EOF
+9, 9, TLSFinished, EOF
