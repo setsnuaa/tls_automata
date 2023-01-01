@@ -120,7 +120,6 @@ def abstract_response(responses):
     return msg_type
 
 
-# ？
 def fill_answer_with(prefix: List[Letter], symbol: str, length: int) -> List[Letter]:
     letters = prefix
     while len(letters) < length:
@@ -128,7 +127,7 @@ def fill_answer_with(prefix: List[Letter], symbol: str, length: int) -> List[Let
     return letters
 
 
-# ？
+# L*算法优化 前缀是EOF 那么后面的输入对应的输出都是EOF
 def get_expected_output(input_word: Word, knowledge_tree: KnowledgeTree) -> List[Letter]:
     prefix = input_word.letters[:-1]
     while prefix:
