@@ -144,6 +144,7 @@ class TLSClientKnowledgeBase(ActiveKnowledgeBase):
                 self.options.log(f" => {output_letter}\n")
 
             output_letters.append(Letter(output_letter))
+            # L*算法优化 前缀是EOF 那么后面的输入对应的输出都是EOF，不用再发消息了
             if output_letter == "EOF":
                 output_letters = fill_answer_with(output_letters, "EOF", n)
                 break
@@ -169,6 +170,7 @@ class TLSClientKnowledgeBase(ActiveKnowledgeBase):
             return "No RSP"
 
         try:
+            # select方式读取数据，不会阻塞
             response = read_next_msg(self.tls_session)
             if response is None:
                 return "EOF"
