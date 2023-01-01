@@ -127,7 +127,7 @@ def fill_answer_with(prefix: List[Letter], symbol: str, length: int) -> List[Let
     return letters
 
 
-# L*算法优化 前缀是EOF 那么后面的输入对应的输出都是EOF
+# 从之前已有的输出缓存里面给出输出
 def get_expected_output(input_word: Word, knowledge_tree: KnowledgeTree) -> List[Letter]:
     prefix = input_word.letters[:-1]
     while prefix:
@@ -145,8 +145,9 @@ def get_expected_output(input_word: Word, knowledge_tree: KnowledgeTree) -> List
 
 def read_next_msg(tls_session, timeout=None):
     try:
+        # 调用这个函数后客户端发送的消息存到服务端的缓存里面了
         if timeout:
-            # 调用这个函数后客户端发送的消息存到服务端的缓存里面了
+            # 有timeout的话 到时间了就返回 不会阻塞
             tls_session.get_next_msg(socket_timeout=timeout)
         else:
             tls_session.get_next_msg()
