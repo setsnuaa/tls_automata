@@ -166,14 +166,20 @@ class TLSClientKnowledgeBase(ActiveKnowledgeBase):
         except Exception:
             return "INTERNAL ERROR DURING EMISSION"
 
+        # 如果客户端没有响应，就不用再调用接收函数了
+        # 因为调用了也收不到响应，浪费一个超时时间
         if expected_output is not None and expected_output == "No RSP":
             return "No RSP"
 
         try:
             # select方式读取数据，不会阻塞
             response = read_next_msg(self.tls_session)
+            # 注意x是空集和x=None的时候，使用not x都会返回True
+            # 所以先判断x是否是None，再判断x是否是空集
+            # None说明连接已经断开
             if response is None:
                 return "EOF"
+            # 空集说明超时时间内客户端没有响应
             if not response:
                 return "No RSP"
 
