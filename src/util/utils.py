@@ -1,4 +1,4 @@
-# TLS信息抽象类
+# 处理TLS消息
 from typing import List, Dict, Tuple, Optional
 import socket
 
