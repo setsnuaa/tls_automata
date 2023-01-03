@@ -144,6 +144,7 @@ class TLSClientKnowledgeBase(ActiveKnowledgeBase):
                 self.options.log(f" => {output_letter}\n")
 
             output_letters.append(Letter(output_letter))
+            # 优化1
             # L*算法优化 前缀是EOF 那么后面的输入对应的输出都是EOF，不用再发消息了
             if output_letter == "EOF":
                 output_letters = fill_answer_with(output_letters, "EOF", n)
@@ -166,6 +167,7 @@ class TLSClientKnowledgeBase(ActiveKnowledgeBase):
         except Exception:
             return "INTERNAL ERROR DURING EMISSION"
 
+        # 优化2
         # 如果客户端没有响应，就不用再调用接收函数了
         # 因为调用了也收不到响应，浪费一个超时时间
         if expected_output is not None and expected_output == "No RSP":
