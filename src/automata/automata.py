@@ -496,40 +496,40 @@ def load_automaton_from_file(filename: str) -> Automaton:
 
 # 两个状态机的所有区分序列
 def extract_distinguishes(
-    automaton1:Automaton,automaton2:Automaton
-)->List[List[str]]:
-    if automaton1.input_vocabulary!=automaton2.input_vocabulary:
+        automaton1: Automaton, automaton2: Automaton
+) -> List[List[str]]:
+    if automaton1.input_vocabulary != automaton2.input_vocabulary:
         raise DifferentInputVocabulary
 
-    vocabulary=automaton1.input_vocabulary
-    max_depth=max(len(automaton1.states),len(automaton2.states))
-    distinguishing_sequences=[]
+    vocabulary = automaton1.input_vocabulary
+    max_depth = max(len(automaton1.states), len(automaton2.states))
+    distinguishing_sequences = []
 
     # dfs
-    def find_differences(current_sequence:List[str],state1:int,state2:int):
-        if len(current_sequence)==max_depth-1:
+    def find_differences(current_sequence: List[str], state1: int, state2: int):
+        if len(current_sequence) == max_depth - 1:
             return
 
         for word in vocabulary:
-            visited_sequence=current_sequence+[word]
+            visited_sequence = current_sequence + [word]
             next_state1, recv_msgs1, _ = automaton1.states[state1][word]
             next_state2, recv_msgs2, _ = automaton2.states[state2][word]
-            if recv_msgs1==recv_msgs2:
-                if next_state1!=state1 or next_state2!=state2:
-                    find_differences(visited_sequence,next_state1,next_state2)
+            if recv_msgs1 == recv_msgs2:
+                if next_state1 != state1 or next_state2 != state2:
+                    find_differences(visited_sequence, next_state1, next_state2)
             else:
                 distinguishing_sequences.append(visited_sequence)
 
-    find_differences([],0,0)
+    find_differences([], 0, 0)
     return distinguishing_sequences
 
 
 # 多个状态机的区分序列
 def extract_pairwise_distinguishes(automatas: List[Automaton]) -> List[List[List[str]]]:
     distinguishes = []
-    for index,automaton1 in enumerate(automatas):
-        for automaton2 in automatas[index+1:]:
-            distinguish=extract_distinguishes(automaton1, automaton2)
+    for index, automaton1 in enumerate(automatas):
+        for automaton2 in automatas[index + 1:]:
+            distinguish = extract_distinguishes(automaton1, automaton2)
             if distinguish:
                 distinguishes.append(distinguish)
     return distinguishes
@@ -538,6 +538,53 @@ def extract_pairwise_distinguishes(automatas: List[Automaton]) -> List[List[List
 # 合并区分序列
 def cover_distinguishes(distinguishes: List[List[List[str]]]) -> List[List[str]]:
     def find_next_best_sequence(distinguishes: List[List[List[str]]]) -> List[str]:
-        sequence_counts:Dict[str,int]={}
+        sequence_counts: Dict[str, int] = {}
+        max_count = 0
+        best_sequence = []
+        for distinguish in distinguishes:
+            for sequence in distinguish:
+                sequence_str = ", ".join(sequence)
+                new_count = sequence_counts.get(sequence_str, 0) + 1
+                sequence_counts[sequence_str] = new_count
+                if new_count >= max_count:
+                    best_sequence = sequence
+                    max_count = new_count
+        return best_sequence
+
+    def remove_covered_distinguishes(
+            distinguishes: List[List[List[str]]], sequence: List[str]
+    ):
+        return [
+            distinguish
+            for distinguish in distinguishes
+            if sequence not in distinguish
+        ]
+
+    remaining_distinguishes = distinguishes
+    distinguishing_sequences = []
+    while remaining_distinguishes:
+        next_sequence = find_next_best_sequence(remaining_distinguishes)
+        remaining_distinguishes = remove_covered_distinguishes(
+            remaining_distinguishes, next_sequence
+        )
+        distinguishing_sequences.append(next_sequence)
+    return distinguishing_sequences
 
 
+def get_outputs(
+        automata: List[Automaton], sequence: List[str]
+) -> List[List[List[str]]]:
+    return [automaton.run(sequence)[1] for automaton in automata]
+
+
+def fingerprint_automata(
+        automata: List[Automaton],
+) -> List[Tuple[List[str], List[List[List[str]]]]]:
+    distinguishes = extract_pairwise_distinguishes(automata)
+    if not distinguishes:
+        raise IndistinguishableSetOfAutomata
+
+    covering_sequences = cover_distinguishes(distinguishes)
+    return [
+        (sequence, get_outputs(automata, sequence)) for sequence in covering_sequences
+    ]
