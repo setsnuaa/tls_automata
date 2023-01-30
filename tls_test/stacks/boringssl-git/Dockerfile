@@ -1,6 +1,8 @@
 FROM debian:buster
 
-RUN apt-get update -y && apt install -y git cmake make build-essential pkg-config libunwind-dev
+RUN sed -i s@/deb.debian.org/@/mirrors.aliyun.com/@g /etc/apt/sources.list
+RUN apt-get clean && apt-get update -y
+RUN apt install -y git cmake make build-essential pkg-config libunwind-dev
 RUN apt install -y golang ncat
 
 ARG REPO=boringssl
