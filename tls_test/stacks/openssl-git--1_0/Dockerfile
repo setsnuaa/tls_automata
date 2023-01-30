@@ -1,6 +1,8 @@
 FROM debian:buster AS builder
 
-RUN apt-get update && apt-get install -y --no-install-recommends git perl gcc make libc6-dev ca-certificates && apt-get clean
+RUN sed -i s@/deb.debian.org/@/mirrors.aliyun.com/@g /etc/apt/sources.list
+RUN apt-get clean && apt-get update -y
+RUN apt-get install -y --no-install-recommends git perl gcc make libc6-dev ca-certificates && apt-get clean
 
 WORKDIR /openssl
 ARG COMMIT
@@ -13,7 +15,9 @@ RUN make install_sw INSTALL_PREFIX=/tmp/destdir
 
 FROM debian:buster
 
-RUN apt-get update && apt-get install -y --no-install-recommends ncat && apt-get clean
+RUN sed -i s@/deb.debian.org/@/mirrors.aliyun.com/@g /etc/apt/sources.list
+RUN apt-get clean && apt-get update -y
+RUN apt-get install -y --no-install-recommends ncat && apt-get clean
 
 ENV PATH="/usr/local/ssl/bin:$PATH"
 COPY --from=builder /tmp/destdir /
