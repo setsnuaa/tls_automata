@@ -1,4 +1,4 @@
 pylstar==0.1.2
 cryptography==37.0.4
--e git+https://kgithub.com/pictyeye/scapy.git@fddebaa934a941b970f0b2a24c5cf51fc54a8742#egg=scapy
+-e git+https://github.com/pictyeye/scapy.git@fddebaa934a941b970f0b2a24c5cf51fc54a8742#egg=scapy
 configparser==5.3.0
