@@ -16,3 +16,4 @@ RUN mkdir build && cd build && cmake ..
 RUN cd build && make
 
 COPY run_client.sh /run_client.sh
+RUN chmod +x /run_client.sh
