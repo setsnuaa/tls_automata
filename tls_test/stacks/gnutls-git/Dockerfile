@@ -23,3 +23,4 @@ RUN ldconfig
 
 
 COPY run_client.sh /run_client.sh
+RUN chmod +x /run_client.sh
