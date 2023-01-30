@@ -24,4 +24,5 @@ RUN ldconfig
 RUN ldconfig /usr/local/lib64/
 
 COPY run_client_new.sh /run_client.sh
+RUN chmod +x /run_client.sh
 RUN sed -i 's/\r$//' /run_client.sh
