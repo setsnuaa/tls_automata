@@ -1,7 +1,9 @@
 FROM debian:bullseye
 
-RUN apt-get update && apt-get install -y --no-install-recommends git perl gcc make libc6-dev ca-certificates ncat && apt-get clean
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN sed -i s@/deb.debian.org/@/mirrors.aliyun.com/@g /etc/apt/sources.list
+RUN apt-get clean && apt-get update -y
+RUN apt-get install -y --no-install-recommends git perl gcc make libc6-dev ca-certificates ncat && apt-get clean
+RUN apt-get install -y --no-install-recommends \
     autoconf libtool gettext autopoint libev-dev \
     automake autogen nettle-dev libp11-kit-dev libtspi-dev libunistring-dev \
     guile-2.2-dev libtasn1-6-dev libidn2-0-dev gawk gperf \
