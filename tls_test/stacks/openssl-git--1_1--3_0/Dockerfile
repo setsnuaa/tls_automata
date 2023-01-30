@@ -1,5 +1,8 @@
 FROM debian:buster AS builder
-
+# 添加国内源
+RUN sed -i s@/archive.ubuntu.com/@/mirrors.aliyun.com/@g /etc/apt/sources.list\
+&& sed -i s@/security.ubuntu.com/@/mirrors.aliyun.com/@g /etc/apt/sources.list\
+&& apt-get clean
 RUN apt-get update && apt-get install -y --no-install-recommends git perl gcc make libc6-dev ca-certificates && apt-get clean
 
 WORKDIR /openssl
@@ -13,6 +16,9 @@ RUN make install_sw DESTDIR=/tmp/destdir
 
 FROM debian:buster
 
+RUN sed -i s@/archive.ubuntu.com/@/mirrors.aliyun.com/@g /etc/apt/sources.list\
+&& sed -i s@/security.ubuntu.com/@/mirrors.aliyun.com/@g /etc/apt/sources.list\
+&& apt-get clean
 RUN apt-get update && apt-get install -y --no-install-recommends ncat && apt-get clean
 
 COPY --from=builder /tmp/destdir /
