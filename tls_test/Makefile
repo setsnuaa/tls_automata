@@ -32,17 +32,17 @@ containers/tool/tls-inferer.docker: tool/Dockerfile tool/probe_client.sh
 
 # OpenSSL
 
-containers/openssl/%.docker: stacks/openssl-git--1_1--3_0/tags/% stacks/openssl-git--1_1--3_0/Dockerfile stacks/openssl-git--1_1--3_0/run_server.sh stacks/openssl-git--1_1--3_0/run_client.sh
+containers/openssl/%.docker: stacks/openssl-git--1_1--3_0/tags/% stacks/openssl-git--1_1--3_0/run_client.sh
 	docker build --build-arg COMMIT=$$(basename $(@:.docker=)) -t tls-test/openssl:$$(basename $(@:.docker=)) stacks/openssl-git--1_1--3_0
 	mkdir -p $$(dirname $@)
 	docker image ls -q tls-test/openssl:$$(basename $(@:.docker=)) > $@
 
-containers/openssl/%.docker: stacks/openssl-git--1_0/tags/% stacks/openssl-git--1_0/Dockerfile stacks/openssl-git--1_0/run_server.sh stacks/openssl-git--1_0/run_client.sh
+containers/openssl/%.docker: stacks/openssl-git--1_0/tags/% stacks/openssl-git--1_0/run_client.sh
 	docker build --build-arg COMMIT=$$(basename $(@:.docker=)) -t tls-test/openssl:$$(basename $(@:.docker=)) stacks/openssl-git--1_0
 	mkdir -p $$(dirname $@)
 	docker image ls -q tls-test/openssl:$$(basename $(@:.docker=)) > $@
 
-containers/openssl/%.docker: stacks/openssl-git--0_9_8/tags/% stacks/openssl-git--0_9_8/Dockerfile stacks/openssl-git--0_9_8/run_server.sh stacks/openssl-git--0_9_8/run_client.sh
+containers/openssl/%.docker: stacks/openssl-git--0_9_8/tags/% stacks/openssl-git--0_9_8/Dockerfile stacks/openssl-git--0_9_8/run_client.sh
 	docker build --build-arg COMMIT=$$(basename $(@:.docker=)) -t tls-test/openssl:$$(basename $(@:.docker=)) stacks/openssl-git--0_9_8
 	mkdir -p $$(dirname $@)
 	docker image ls -q tls-test/openssl:$$(basename $(@:.docker=)) > $@
@@ -53,12 +53,12 @@ containers/openssl/%.docker: stacks/openssl-git--0_9_8/tags/% stacks/openssl-git
 
 # wolfSSL
 
-containers/wolfssl/%.docker: stacks/wolfssl-git/tags/% stacks/wolfssl-git/Dockerfile stacks/wolfssl-git/run_server.sh stacks/wolfssl-git/run_client.sh
+containers/wolfssl/%.docker: stacks/wolfssl-git/tags/% stacks/wolfssl-git/Dockerfile stacks/wolfssl-git/run_client.sh
 	docker build --build-arg COMMIT=$$(basename $(@:.docker=)) -t tls-test/wolfssl:$$(basename $(@:.docker=)) stacks/wolfssl-git
 	mkdir -p $$(dirname $@)
 	docker image ls -q tls-test/wolfssl:$$(basename $(@:.docker=)) > $@
 
-containers/wolfssl/patch-CVE-2021-3336.docker: stacks/wolfssl-git/Dockerfile stacks/wolfssl-git/run_server.sh stacks/wolfssl-git/run_client.sh
+containers/wolfssl/patch-CVE-2021-3336.docker: stacks/wolfssl-git/Dockerfile stacks/wolfssl-git/run_client.sh
 	docker build --build-arg REPO=SparkiDev --build-arg COMMIT=fad1e67677bf7797b6bd6e1f21a513c289d963a7 -t tls-test/wolfssl:$$(basename $(@:.docker=)) stacks/wolfssl-git
 	mkdir -p $$(dirname $@)
 	docker image ls -q tls-test/wolfssl:$$(basename $(@:.docker=)) > $@
@@ -69,12 +69,12 @@ containers/wolfssl/patch-CVE-2021-3336.docker: stacks/wolfssl-git/Dockerfile sta
 
 # mbedtls 
 
-containers/mbedtls/%.docker: stacks/mbedtls-git/tags/% stacks/mbedtls-git/Dockerfile stacks/mbedtls-git/run_server.sh stacks/mbedtls-git/run_client.sh
+containers/mbedtls/%.docker: stacks/mbedtls-git/tags/% stacks/mbedtls-git/Dockerfile stacks/mbedtls-git/run_client.sh
 	docker build --build-arg COMMIT=$$(basename $(@:.docker=)) -t tls-test/mbedtls:$$(basename $(@:.docker=)) stacks/mbedtls-git
 	mkdir -p $$(dirname $@)
 	docker image ls -q tls-test/mbedtls:$$(basename $(@:.docker=)) > $@
 
-containers/mbedtls/vulnerable.docker: stacks/mbedtls-vulnerable/Dockerfile stacks/mbedtls-vulnerable/run_server.sh stacks/mbedtls-vulnerable/explicit.patch
+containers/mbedtls/vulnerable.docker: stacks/mbedtls-vulnerable/Dockerfile stacks/mbedtls-vulnerable/explicit.patch
 	docker build -t tls-test/mbedtls:$$(basename $(@:.docker=)) stacks/mbedtls-vulnerable
 	mkdir -p $$(dirname $@)
 	docker image ls -q tls-test/mbedtls:$$(basename $(@:.docker=)) > $@
@@ -84,26 +84,9 @@ containers/mbedtls/vulnerable.docker: stacks/mbedtls-vulnerable/Dockerfile stack
 
 
 
-# MatrixSSL
-
-containers/matrixssl/%.docker: stacks/matrixssl-git/tags/% stacks/matrixssl-git/Dockerfile stacks/matrixssl-git/run_server.sh
-	docker build --build-arg COMMIT=$$(basename $(@:.docker=)) -t tls-test/matrixssl:$$(basename $(@:.docker=)) stacks/matrixssl-git
-	mkdir -p $$(dirname $@)
-	docker image ls -q tls-test/matrixssl:$$(basename $(@:.docker=)) > $@
-
-containers/matrixssl/3.7.2.docker: stacks/matrixssl-3.7.2/Dockerfile stacks/matrixssl-3.7.2/run_server.sh
-	docker build -t tls-test/matrixssl:$$(basename $(@:.docker=)) stacks/matrixssl-3.7.2
-	mkdir -p $$(dirname $@)
-	docker image ls -q tls-test/matrixssl:$$(basename $(@:.docker=)) > $@
-
-# all: $(foreach tag, $(wildcard matrixssl-git/tags/*), $(subst matrixssl-git/tags/,.build/matrixssl/,$(tag)))
-# all: .build/matrixssl/3.7.2
-
-
-
 # GnuTLS
 
-containers/gnutls/%.docker: stacks/gnutls-git/tags/% stacks/gnutls-git/Dockerfile stacks/gnutls-git/run_server.sh stacks/gnutls-git/run_client.sh
+containers/gnutls/%.docker: stacks/gnutls-git/tags/% stacks/gnutls-git/Dockerfile stacks/gnutls-git/run_client.sh
 	docker build --build-arg COMMIT=$$(basename $(@:.docker=)) -t tls-test/gnutls:$$(basename $(@:.docker=)) stacks/gnutls-git
 	mkdir -p $$(dirname $@)
 	docker image ls -q tls-test/gnutls:$$(basename $(@:.docker=)) > $@
@@ -119,7 +102,7 @@ containers/curl-gnutls/%.docker: containers/gnutls/%.docker stacks/curl-gnutls-g
 
 # Fizz
 
-containers/fizz/%.docker: stacks/fizz-git/tags/% stacks/fizz-git/Dockerfile stacks/fizz-git/run_client.sh stacks/fizz-git/run_server.sh
+containers/fizz/%.docker: stacks/fizz-git/tags/% stacks/fizz-git/Dockerfile stacks/fizz-git/run_client.sh
 	docker build --build-arg COMMIT=$$(basename $(@:.docker=)) -t tls-test/fizz:$$(basename $(@:.docker=)) stacks/fizz-git
 	mkdir -p $$(dirname $@)
 	docker image ls -q tls-test/fizz:$$(basename $(@:.docker=)) > $@
@@ -127,7 +110,7 @@ containers/fizz/%.docker: stacks/fizz-git/tags/% stacks/fizz-git/Dockerfile stac
 
 # BoringSSL
 
-containers/boringssl/%.docker: stacks/boringssl-git/tags/% stacks/boringssl-git/Dockerfile stacks/boringssl-git/run_client.sh stacks/boringssl-git/run_server.sh
+containers/boringssl/%.docker: stacks/boringssl-git/tags/% stacks/boringssl-git/Dockerfile stacks/boringssl-git/run_client.sh
 	docker build --build-arg COMMIT=$$(basename $(@:.docker=)) -t tls-test/boringssl:$$(basename $(@:.docker=)) stacks/boringssl-git
 	mkdir -p $$(dirname $@)
 	docker image ls -q tls-test/boringssl:$$(basename $(@:.docker=)) > $@
@@ -156,27 +139,27 @@ containers/erlang/%.docker: stacks/erlang-24-git/tags/% stacks/erlang-24-git/Doc
 
 # NSS
 
-containers/nss/%.docker: stacks/nss-git--3_15/tags/% stacks/nss-git--3_15/Dockerfile stacks/nss-git--3_15/run_server.sh stacks/nss-git--3_15/run_client.sh
+containers/nss/%.docker: stacks/nss-git--3_15/tags/% stacks/nss-git--3_15/Dockerfile stacks/nss-git--3_15/run_client.sh
 	docker build --build-arg COMMIT=$$(basename $(@:.docker=)) -t tls-test/nss:$$(basename $(@:.docker=)) stacks/nss-git--3_15
 	mkdir -p $$(dirname $@)
 	docker image ls -q tls-test/nss:$$(basename $(@:.docker=)) > $@
 
-containers/nss/%.docker: stacks/nss-git--3_16_17/tags/% stacks/nss-git--3_16_17/Dockerfile stacks/nss-git--3_16_17/run_server.sh stacks/nss-git--3_16_17/run_client.sh
+containers/nss/%.docker: stacks/nss-git--3_16_17/tags/% stacks/nss-git--3_16_17/Dockerfile stacks/nss-git--3_16_17/run_client.sh
 	docker build --build-arg COMMIT=$$(basename $(@:.docker=)) -t tls-test/nss:$$(basename $(@:.docker=)) stacks/nss-git--3_16_17
 	mkdir -p $$(dirname $@)
 	docker image ls -q tls-test/nss:$$(basename $(@:.docker=)) > $@
 
-containers/nss/%.docker: stacks/nss-git--3_18_20/tags/% stacks/nss-git--3_18_20/Dockerfile stacks/nss-git--3_18_20/run_server.sh stacks/nss-git--3_18_20/run_client.sh
+containers/nss/%.docker: stacks/nss-git--3_18_20/tags/% stacks/nss-git--3_18_20/Dockerfile stacks/nss-git--3_18_20/run_client.sh
 	docker build --build-arg COMMIT=$$(basename $(@:.docker=)) -t tls-test/nss:$$(basename $(@:.docker=)) stacks/nss-git--3_18_20
 	mkdir -p $$(dirname $@)
 	docker image ls -q tls-test/nss:$$(basename $(@:.docker=)) > $@
 
-containers/nss/%.docker: stacks/nss-git--3_21_36/tags/% stacks/nss-git--3_21_36/Dockerfile stacks/nss-git--3_21_36/run_server.sh stacks/nss-git--3_21_36/run_client.sh
+containers/nss/%.docker: stacks/nss-git--3_21_36/tags/% stacks/nss-git--3_21_36/Dockerfile stacks/nss-git--3_21_36/run_client.sh
 	docker build --build-arg COMMIT=$$(basename $(@:.docker=)) -t tls-test/nss:$$(basename $(@:.docker=)) stacks/nss-git--3_21_36
 	mkdir -p $$(dirname $@)
 	docker image ls -q tls-test/nss:$$(basename $(@:.docker=)) > $@
 
-containers/nss/%.docker: stacks/nss-git/tags/% stacks/nss-git/Dockerfile stacks/nss-git/run_server.sh stacks/nss-git/run_client.sh
+containers/nss/%.docker: stacks/nss-git/tags/% stacks/nss-git/Dockerfile stacks/nss-git/run_client.sh
 	docker build --build-arg COMMIT=$$(basename $(@:.docker=)) -t tls-test/nss:$$(basename $(@:.docker=)) stacks/nss-git
 	mkdir -p $$(dirname $@)
 	docker image ls -q tls-test/nss:$$(basename $(@:.docker=)) > $@
