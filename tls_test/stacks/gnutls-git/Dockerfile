@@ -10,7 +10,7 @@ RUN apt-get install -y --no-install-recommends \
     libunbound-dev dns-root-data bison wget patch && apt-get clean
 
 
-RUN git clone https://github.com/gnutls/gnutls.git
+RUN git clone https://hub.nuaa.cf/gnutls/gnutls.git
 
 ARG COMMIT=3.7.0
 
