@@ -309,8 +309,8 @@ def main():
     automaton = convert_from_pylstar(scenario.input_vocabulary, state_machine)
     with open(f"{args.output_dir}/final.automaton", "w", encoding="utf-8") as fd:
         fd.write(f"{automaton}\n")
-    # with open(f"{args.output_dir}/automaton.dot", "w", encoding="utf-8") as fd:
-    #     fd.write(automaton.dot())
+    with open(f"{args.output_dir}/automaton.dot", "w", encoding="utf-8") as fd:
+        fd.write(automaton.dot())
 
     log(f"n_queries={TLSBase.stats.nb_query}\n")
     log(f"n_submitted_queries={TLSBase.stats.nb_submited_query}\n")
