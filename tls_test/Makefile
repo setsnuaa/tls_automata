@@ -53,12 +53,12 @@ containers/openssl/%.docker: stacks/openssl-git--0_9_8/tags/% stacks/openssl-git
 
 # wolfSSL
 
-containers/wolfssl/%.docker: stacks/wolfssl-git--2_0_0/tags/% stacks/wolfssl-git/Dockerfile stacks/wolfssl-git/run_client.sh
+containers/wolfssl/%.docker: stacks/wolfssl-git--2_0_0/tags/% stacks/wolfssl-git--2_0_0/Dockerfile stacks/wolfssl-git--2_0_0/run_client.sh
 	docker build --build-arg COMMIT=$$(basename $(@:.docker=)) -t tls-test/wolfssl:$$(basename $(@:.docker=)) stacks/wolfssl-git
 	mkdir -p $$(dirname $@)
 	docker image ls -q tls-test/wolfssl:$$(basename $(@:.docker=)) > $@
 
-containers/wolfssl/%.docker: stacks/wolfssl-git--3_15_5/tags/% stacks/wolfssl-git/Dockerfile stacks/wolfssl-git/run_client.sh
+containers/wolfssl/%.docker: stacks/wolfssl-git--3_15_5/tags/% stacks/wolfssl-git--3_15_5/Dockerfile stacks/wolfssl-git--3_15_5/run_client.sh
 	docker build --build-arg COMMIT=$$(basename $(@:.docker=)) -t tls-test/wolfssl:$$(basename $(@:.docker=)) stacks/wolfssl-git
 	mkdir -p $$(dirname $@)
 	docker image ls -q tls-test/wolfssl:$$(basename $(@:.docker=)) > $@
