@@ -6,7 +6,7 @@ RUN apt-get install -y --no-install-recommends git perl gcc make libc6-dev ca-ce
 
 WORKDIR /openssl
 ARG COMMIT
-RUN git clone --branch ${COMMIT} --depth 1 https://hub.nuaa.cf/openssl/openssl.git .
+RUN git clone --branch ${COMMIT} --depth 1 https://gitclone.com/github.com/openssl/openssl.git .
 
 RUN ./config
 RUN make
