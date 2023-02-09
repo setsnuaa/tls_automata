@@ -11,10 +11,10 @@ for file in stacks/openssl-git--1_0/tags/*
 do
   make containers/openssl/"$(basename $file)".docker
 done
-for file in stacks/openssl-git--0_9_8/tags/*
-do
-  make containers/openssl/"$(basename $file)".docker
-done
+#for file in stacks/openssl-git--0_9_8/tags/*
+#do
+#  make containers/openssl/"$(basename $file)".docker
+#done
 # gnutls
 for file in stacks/gnutls-git/tags/*
 do
