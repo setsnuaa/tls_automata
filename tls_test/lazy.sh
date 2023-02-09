@@ -20,11 +20,11 @@ for file in stacks/gnutls-git/tags/*
 do
   make containers/gnutls/"$(basename $file)".docker
 done
-# boringssl
-for file in stacks/boringssl-git/tags/*
-do
-  make containers/boringssl/"$(basename $file)".docker
-done
+## boringssl
+#for file in stacks/boringssl-git/tags/*
+#do
+#  make containers/boringssl/"$(basename $file)".docker
+#done
 # wolfssl
 for file in stacks/wolfssl-git--2_0_0/tags/*
 do
