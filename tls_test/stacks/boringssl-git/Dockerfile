@@ -1,6 +1,6 @@
 FROM debian:buster
 
-RUN sed -i s@/deb.debian.org/@/mirrors.aliyun.com/@g /etc/apt/sources.list
+RUN sed -i s@/deb.debian.org/@/mirrors.163.com/@g /etc/apt/sources.list
 RUN apt-get clean && apt-get update -y
 RUN apt install -y git cmake make build-essential pkg-config libunwind-dev
 RUN apt install -y golang ncat
