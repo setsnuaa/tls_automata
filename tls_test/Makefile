@@ -53,20 +53,15 @@ containers/openssl/%.docker: stacks/openssl-git--0_9_8/tags/% stacks/openssl-git
 
 # wolfSSL
 
-containers/wolfssl/%.docker: stacks/wolfssl-git--2_0_0/tags/% stacks/wolfssl-git--2_0_0/Dockerfile stacks/wolfssl-git--2_0_0/run_client.sh
-	docker build --build-arg COMMIT=$$(basename $(@:.docker=)) -t tls-test/wolfssl:$$(basename $(@:.docker=)) stacks/wolfssl-git--2_0_0
+containers/wolfssl/%.docker: stacks/wolfssl-git/tags/% stacks/wolfssl-git/Dockerfile stacks/wolfssl-git/run_server.sh stacks/wolfssl-git/run_client.sh
+	docker build --build-arg COMMIT=$$(basename $(@:.docker=)) -t tls-test-bed/wolfssl:$$(basename $(@:.docker=)) stacks/wolfssl-git
 	mkdir -p $$(dirname $@)
-	docker image ls -q tls-test/wolfssl:$$(basename $(@:.docker=)) > $@
+	docker image ls -q tls-test-bed/wolfssl:$$(basename $(@:.docker=)) > $@
 
-containers/wolfssl/%.docker: stacks/wolfssl-git--3_15_5/tags/% stacks/wolfssl-git--3_15_5/Dockerfile stacks/wolfssl-git--3_15_5/run_client.sh
-	docker build --build-arg COMMIT=$$(basename $(@:.docker=)) -t tls-test/wolfssl:$$(basename $(@:.docker=)) stacks/wolfssl-git--3_15_5
+containers/wolfssl/patch-CVE-2021-3336.docker: stacks/wolfssl-git/Dockerfile stacks/wolfssl-git/run_server.sh stacks/wolfssl-git/run_client.sh
+	docker build --build-arg REPO=SparkiDev --build-arg COMMIT=fad1e67677bf7797b6bd6e1f21a513c289d963a7 -t tls-test-bed/wolfssl:$$(basename $(@:.docker=)) stacks/wolfssl-git
 	mkdir -p $$(dirname $@)
-	docker image ls -q tls-test/wolfssl:$$(basename $(@:.docker=)) > $@
-
-containers/wolfssl/patch-CVE-2021-3336.docker: stacks/wolfssl-git/Dockerfile stacks/wolfssl-git/run_client.sh
-	docker build --build-arg REPO=SparkiDev --build-arg COMMIT=fad1e67677bf7797b6bd6e1f21a513c289d963a7 -t tls-test/wolfssl:$$(basename $(@:.docker=)) stacks/wolfssl-git
-	mkdir -p $$(dirname $@)
-	docker image ls -q tls-test/wolfssl:$$(basename $(@:.docker=)) > $@
+	docker image ls -q tls-test-bed/wolfssl:$$(basename $(@:.docker=)) > $@
 
 # all: $(foreach tag, $(wildcard wolfssl-git/tags/*), $(subst wolfssl-git/tags/,.build/wolfssl/,$(tag)))
 
