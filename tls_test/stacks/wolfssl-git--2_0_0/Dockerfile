@@ -5,7 +5,7 @@ RUN apt-get clean && apt-get update -y
 RUN apt-get install -y --no-install-recommends git perl gcc make libc6-dev ca-certificates ncat && apt-get clean
 RUN apt-get update && apt-get install -y --no-install-recommends dh-autoreconf && apt-get clean
 ARG REPO=wolfSSL
-RUN git clone https://hub.nuaa.cf/${REPO}/wolfssl.git
+RUN git clone https://kgithub.com/${REPO}/wolfssl.git
 ARG COMMIT=v5.1.1-stable
 WORKDIR /wolfssl
 RUN git checkout -b current ${COMMIT}
