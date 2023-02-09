@@ -1,6 +1,8 @@
 FROM debian:buster
 
-RUN apt-get update && apt-get install -y --no-install-recommends git perl gcc make libc6-dev ca-certificates ncat && apt-get clean
+RUN sed -i s@/deb.debian.org/@/mirrors.163.com/@g /etc/apt/sources.list
+RUN apt-get clean && apt-get update -y
+RUN apt-get install -y --no-install-recommends git perl gcc make libc6-dev ca-certificates ncat && apt-get clean
 RUN apt-get update && apt-get install -y --no-install-recommends dh-autoreconf && apt-get clean
 ARG REPO=wolfSSL
 RUN git clone https://hub.nuaa.cf/${REPO}/wolfssl.git
