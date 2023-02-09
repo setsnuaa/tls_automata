@@ -15,3 +15,5 @@ RUN make install
 RUN ldconfig
 
 COPY run_client.sh /run_client.sh
+RUN chmod +x /run_client.sh
+RUN sed -i 's/\r$//' /run_client.sh
