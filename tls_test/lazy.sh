@@ -26,7 +26,11 @@ done
 #  make containers/boringssl/"$(basename $file)".docker
 #done
 # wolfssl
-for file in stacks/wolfssl-git/tags/*
+for file in stacks/wolfssl-git--2_0_0/tags/*
+do
+  make containers/wolfssl/"$(basename $file)".docker
+done
+for file in stacks/wolfssl-git--3_15_5/tags/*
 do
   make containers/wolfssl/"$(basename $file)".docker
 done
