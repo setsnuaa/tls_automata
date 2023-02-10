@@ -13,13 +13,17 @@ for file in stacks/gnutls-git/tags/*
 do
   ./infer-client.sh tls-test/gnutls:"$(basename $file)" 1.2 tls12
 done
-# boringssl
-for file in stacks/boringssl-git/tags/*
-do
-  ./infer-client.sh tls-test/boringssl:"$(basename $file)" 1.2 tls12
-done
+## boringssl
+#for file in stacks/boringssl-git/tags/*
+#do
+#  ./infer-client.sh tls-test/boringssl:"$(basename $file)" 1.2 tls12
+#done
 # wolfssl
-for file in stacks/wolfssl-git/tags/*
+for file in stacks/wolfssl-git--2_0_0/tags/*
+do
+  ./infer-client.sh tls-test/wolfssl:"$(basename $file)" 1.2 tls12
+done
+for file in stacks/wolfssl-git--3_15_5/tags/*
 do
   ./infer-client.sh tls-test/wolfssl:"$(basename $file)" 1.2 tls12
 done
