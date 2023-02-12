@@ -17,5 +17,6 @@
 - 生成推理工具容器，`make containers/tool/tls-inferer.docker`，同样可以在containers/tool/tls-inferer.docker文件里面找到镜像id
 - 运行实验脚本，`./infer-client.sh tls-test/openssl:openssl-3.0.0 1.3 tls13`，推理工具会对openssl-3.0.0客户端指纹识别，1.3是客户端的tls版本，tls13是推理工具的实验场景，两个要对应，比如想对tls1.2指纹识别，那么客户端对应1.2，推理工具对应tls12
 - 简化状态机，`./automaton2dot.py client.[tls13/tls12] final.automaton final.dot`
+- 绘制状态机，`dot -Tpdf input.dot -o output.pdf`
 
 生成的状态机保存在/tls_test/results下面。
