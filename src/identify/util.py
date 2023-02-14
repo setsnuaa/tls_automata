@@ -39,6 +39,8 @@ def dedup_implementation_dir(implementation_path):
                 # with open(protocol_path / "automaton.dot", "w", encoding="utf-8") as fd:
                 #     fd.write(automaton.dot())
                 with open(protocol_path / "automaton.dot") as f:
+                    # 加个入口节点
+                    # TODO
                     state_machine = f.read()
             except OSError:
                 continue

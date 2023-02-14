@@ -93,17 +93,6 @@ class ModelTree(networkx.DiGraph):
 
     # 画出状态树
     def draw(self, fmt="dot", path=None):
-        """Draw this tree using Graphviz in a desired output format. This
-        slightly modifies the tree in order to improve the output:
-        -   Set the label of all non leafs nodes to blank, as the information
-            is already captured by the edges.
-        -   Set the label of all leaf nodes to the list of servers, including
-            the percentage of how much servers are contained in this leaf,
-            compared to all present in the tree.
-        Args:
-            tree: The tree to modify and draw.
-            fmt: Any format supported by Graphviz in which to draw to graph.
-        """
         try:
             model_count = len(self.models)
         except KeyError:
@@ -135,11 +124,7 @@ class ModelTree(networkx.DiGraph):
 
 # 规范化
 def normalize_graph(dot_graph: str, *, max_depth=10) -> ModelTree:
-    """Normalizes an input graph into a ModelTree. It is possible that an input
-    graph has multiple DOT representations (think of whitespace differences,
-    but also graphs that have the same structure but different node names. In
-    order to see if these are identical, we normalize them by unwrapping them
-    as a tree.
+    """
     Args:
         dot_graph: The DOT representation of the input graph
         max_depth: The maximum depth of the tree, especially relevant when the
@@ -162,7 +147,8 @@ def normalize_graph(dot_graph: str, *, max_depth=10) -> ModelTree:
     return _merge_subgraph(tree, tree_root, graph, graph_root, 0, max_depth)
 
 
-# 合并
+# 将状态机转换为树
+# dfs
 def _merge_subgraph(
         tree: ModelTree,
         root: tuple,
@@ -205,16 +191,12 @@ def _merge_subgraph(
         for _, edge in graph[current_node][neighbor].items():
             received_node = _merge_path_from_label(tree, root, edge["label"])
 
-            # If the received message contains 'ConnectionClosed', this
-            # path can be stopped here. This greatly reduces the number
-            # of redundant nodes, because of 'ConnectionClosed' edges
-            # go to the final node, which always contains many self loops.
-            if "ConnectionClosed" in received_node[-1]:
+            # 当状态机的一条边的输出为EOF的时候，说明遍历到了终止状态，停止遍历
+            if "EOF" in received_node[-1]:
                 # Do not recurse
                 continue
 
-            # If a node only has itself as a neighbor, this is a sink state and
-            # we do not recurse
+            # 吸收态也停止遍历
             if neighbors == [current_node]:
                 continue
 
@@ -248,6 +230,7 @@ def _merge_path_from_label(tree: ModelTree, root: tuple, label: str) -> tuple:
     ]
 
     # Append the sent and received messages to the tree
+    # 节点编码
     sent_node = root + (sent,)
     received_node = root + (sent, received)
     tree.add_edge(root, sent_node, label=sent)
@@ -301,9 +284,6 @@ def construct_tree_from_dedup(directory: str, tree_type: str) -> ModelTree:
 
 
 def _construct_hdt(path: Path) -> ModelTree:
-    """Construct the HDT (heuristic decision tree) from the dedup
-    directory.
-    """
     tree = ModelTree()
     tree_root = ()
     tree.add_node(tree_root)
@@ -311,12 +291,17 @@ def _construct_hdt(path: Path) -> ModelTree:
     model_directories = sorted([item for item in path.iterdir() if item.is_dir()])
     for model_dir in model_directories:
         with open(model_dir / "model.gv") as f:
+            # 将状态机转换为树
             graph = normalize_graph(f.read())
+            # 合并树
             tree.add_edges_from(graph.edges(data=True))
             for leaf in graph.leaves:
                 try:
+                    # 如果状态机树的叶节点与状态树叶节点重合，那么说明该叶节点对应的
+                    # 状态机共享从根节点到叶节点的路径，将新加入的状态机名称加入该叶节点
                     tree.nodes[leaf]["models"].add(model_dir.name)
                 except KeyError:
+                    # 状态树中没有状态机树的叶节点，说明是新的叶节点，创建一个字典
                     tree.nodes[leaf]["models"] = {model_dir.name}
 
     tree.condense()
