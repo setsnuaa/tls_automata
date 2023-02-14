@@ -8,6 +8,7 @@ do
   ./infer-client.sh tls-test/mbedtls:"$(basename $file)" 1.2 tls12
 done
 docker rmi `docker images | grep mbedtls | awk '{print $3}'`
+docker image prune -f
 
 for file in stacks/mbedtls-git/tags1/*
 do
@@ -18,6 +19,7 @@ do
   ./infer-client.sh tls-test/mbedtls:"$(basename $file)" 1.2 tls12
 done
 docker rmi `docker images | grep mbedtls | awk '{print $3}'`
+docker image prune -f
 
 for file in stacks/mbedtls-git/tags2/*
 do
@@ -28,6 +30,7 @@ do
   ./infer-client.sh tls-test/mbedtls:"$(basename $file)" 1.2 tls12
 done
 docker rmi `docker images | grep mbedtls | awk '{print $3}'`
+docker image prune -f
 
 for file in stacks/mbedtls-git/tags3/*
 do
@@ -38,6 +41,7 @@ do
   ./infer-client.sh tls-test/mbedtls:"$(basename $file)" 1.2 tls12
 done
 docker rmi `docker images | grep mbedtls | awk '{print $3}'`
+docker image prune -f
 
 for file in stacks/mbedtls-git4/tags/*
 do
@@ -48,3 +52,4 @@ do
   ./infer-client.sh tls-test/mbedtls:"$(basename $file)" 1.2 tls12
 done
 docker rmi `docker images | grep mbedtls | awk '{print $3}'`
+docker image prune -f
