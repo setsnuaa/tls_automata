@@ -1,5 +1,5 @@
 # -*- coding：utf-8 -*-
-from identify.util import dedup_state_machine_dir
+from src.identify.util import dedup_state_machine_dir
 
 
 def main():
